@@ -32,15 +32,25 @@ trayectoria = defaultdict(dict)
 
 # Loader de trayectorias académicas
 
+def contar_materias_cursadas(materias):
+    materias_pasadas = 0
+    for materia in materias:
+        if int(materia['calificacion']) >= 6:
+            materias_pasadas += 1
+    return materias_pasadas
+
 def eliminar_periodo(materia):
     del materia['periodo']
     return materia
 
 for k in kardex:
     if k['kardex'] is not None:
+        periodos_por_alumno = []
+        trayectoria['_id'] = k['_id']
+        trayectoria['materias_cursadas'] = 0
         for semestre in k['kardex']:
             for periodo in k['kardex'][semestre]:
-                trayectoria['_id'] = k['_id']
+                periodos_por_alumno.append(periodo)
                 materias = k['kardex'][semestre][periodo]
                 # Elimina el atributo periodo de cada materia, no es necesario
                 materias = list(map(eliminar_periodo,materias))
@@ -48,6 +58,10 @@ for k in kardex:
                     trayectoria[periodo] = list(materias)
                 else:
                     trayectoria[periodo].extend(materias)
+                trayectoria['materias_cursadas'] += contar_materias_cursadas(materias)
+        periodos_por_alumno = sorted(periodos_por_alumno)
+        trayectoria['periodo_de_ingreso'] = periodos_por_alumno[0] if len(periodos_por_alumno) > 0 else 'ND'
+        trayectoria['ultimo_periodo'] = periodos_por_alumno[-1] if len(periodos_por_alumno) > 0 else 'ND'
     trayectorias.append(trayectoria)
     trayectoria = defaultdict(dict)
 
