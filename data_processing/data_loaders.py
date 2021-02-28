@@ -27,6 +27,7 @@ try:
 except CursorNotFound as c:
     sys.exit(c)
 
+mapa_curricular = defaultdict(dict)
 trayectorias = []
 trayectoria = defaultdict(dict)
 
@@ -54,16 +55,20 @@ for k in kardex:
                 materias = k['kardex'][semestre][periodo]
                 # Elimina el atributo periodo de cada materia, no es necesario
                 materias = list(map(eliminar_periodo,materias))
-                if len(list(trayectoria[periodo])) == 0:
-                    trayectoria[periodo] = list(materias)
+                if len(list(mapa_curricular[periodo])) == 0:
+                    mapa_curricular[periodo] = materias
+                    #trayectoria[periodo] = list(materias)
                 else:
-                    trayectoria[periodo].extend(materias)
+                    mapa_curricular[periodo].extend(materias)
+                    #trayectoria[periodo].extend(materias)
                 trayectoria['materias_cursadas'] += contar_materias_cursadas(materias)
         periodos_por_alumno = sorted(periodos_por_alumno)
         trayectoria['periodo_de_ingreso'] = periodos_por_alumno[0] if len(periodos_por_alumno) > 0 else 'ND'
         trayectoria['ultimo_periodo'] = periodos_por_alumno[-1] if len(periodos_por_alumno) > 0 else 'ND'
-    trayectorias.append(trayectoria)
-    trayectoria = defaultdict(dict)
+        trayectoria['trayectoria'] = mapa_curricular.copy()
+        trayectorias.append(trayectoria)
+        trayectoria = defaultdict(dict)
+        mapa_curricular = defaultdict(dict)
 
 try:
     coll_trayectorias.insert_many(trayectorias, ordered = False)

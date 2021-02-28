@@ -22,26 +22,22 @@ except ConnectionFailure as c:
     sys.exit(c)
 
 try:
-    trayectorias = coll_trayectorias.find()
+    trayectorias = coll_trayectorias.find({
+        '$and' : [
+            {'materias_cursadas' : {'$gte' : 45}}, 
+            {'materias_cursadas' : {'$lte' : 51}}
+        ]
+    })
 except CursorNotFound as c:
     sys.exit(c)
 
-print(trayectorias['2010400953']['10/1'])
-sys.exit()
-
-total_materias = []
-total_materias_por_alumno = 0
-saltar_id = True
+materias = []
+materias_unicas = []
+i = 0
 for trayectoria in trayectorias:
-    for campo in trayectoria:
-        if saltar_id:
-            saltar_id = False
-            continue
-        else:
-            total_materias_por_alumno += len(campo)
-    total_materias.append(total_materias_por_alumno)
-    total_materias_por_alumno = 0
-    saltar_id = True
+    i += 1
+    materias.append(trayectoria['materias_cursadas'])
 
-print(total_materias)
-print(max(total_materias))
+print(i)
+print(set(materias))
+print(max(set(materias)))
