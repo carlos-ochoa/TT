@@ -18,26 +18,45 @@ try:
     cluster = MongoClient(mongo_conn_info)
     db = cluster['db_TT']
     coll_trayectorias = db['Trayectorias']
+    coll_carreras = db['Carreras']
 except ConnectionFailure as c: 
     sys.exit(c)
 
 try:
-    trayectorias = coll_trayectorias.find({
-        '$and' : [
-            {'materias_cursadas' : {'$gte' : 45}}, 
-            {'materias_cursadas' : {'$lte' : 51}}
-        ]
-    })
+    trayectorias = coll_trayectorias.find()
+    carreras = coll_carreras.find()
 except CursorNotFound as c:
     sys.exit(c)
 
 materias = []
 materias_unicas = []
+materias_por_alumno = []
 i = 0
 for trayectoria in trayectorias:
     i += 1
-    materias.append(trayectoria['materias_cursadas'])
+    for periodo in trayectoria['trayectoria']:
+        for materia in trayectoria['trayectoria'][periodo]:
+            materias_unicas.append(materia['nombre'])
+    materias_por_alumno.append(sorted(materias_unicas.copy()))
+    materias_unicas.clear()
+
+i = 0
+
+a = set(['COMUNICACION ORAL Y ESCRITA', 'SEMINARIO DE INVESTIGACIÓN'])
+for carrera in carreras:
+    if a.issubset(set(carrera['materias'])):
+        print(carrera['nombre'])
+        sys.exit()
+
+for mapa in materias_por_alumno:
+    print(json.dumps(mapa, indent = 2))
+    print(set(mapa))
+    for carrera in carreras: 
+        if set(mapa).issubset(set(carrera['materias'])):
+            print(set(carrera['materias']))
+            print(carrera['nombre'])
+            i += 1
+    input()
 
 print(i)
-print(set(materias))
-print(max(set(materias)))
+print(len(materias_por_alumno))

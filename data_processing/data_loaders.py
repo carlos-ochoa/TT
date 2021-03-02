@@ -71,6 +71,6 @@ for k in kardex:
         mapa_curricular = defaultdict(dict)
 
 try:
-    coll_trayectorias.insert_many(trayectorias, ordered = False)
+    coll_carreras.insert_many(trayectorias, ordered = False)
 except BulkWriteError as b:
     sys.exit(b)
