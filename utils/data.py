@@ -24,7 +24,7 @@ class MongoConnection(object):
             self.db = cluster['db_TT']
             self.coll_trayectorias = self.db['Trayectorias']
             self.coll_indice_bajas = self.db['indice_bajas']
-        except ConnectionFailure as c: 
+        except ConnectionFailure as c:
             sys.exit(c)
         return
 
