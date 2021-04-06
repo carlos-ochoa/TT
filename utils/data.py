@@ -24,13 +24,15 @@ class MongoConnection(object):
             self.db = cluster['db_TT']
             self.coll_trayectorias = self.db['Trayectorias']
             self.coll_indice_bajas = self.db['indice_bajas']
+            self.coll_carreras = self.db['Carreras']
         except ConnectionFailure as c: 
             sys.exit(c)
         return
 
     def get_trayectorias(self):
         try:
-            trayectorias = self.coll_trayectorias.find({'carrera' : 'CONTADOR PUBLICO'})
+            trayectorias = self.coll_indice_bajas.find({'tipo_baja' : {'$exists' : True}})
+            mapa_curricular = self.coll_carreras.find({'nombre' : 'CONTADOR PUBLICO'})
         except CursorNotFound as c:
             sys.exit(c)
-        return trayectorias
+        return trayectorias,mapa_curricular
