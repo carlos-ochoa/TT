@@ -25,6 +25,7 @@ class MongoConnection(object):
             self.coll_trayectorias = self.db['Trayectorias']
             self.coll_indice_bajas = self.db['indice_bajas']
             self.coll_carreras = self.db['Carreras']
+            self.coll_curso_actual_bajas = self.db['curso_actual_para_bajas']
         except ConnectionFailure as c: 
             sys.exit(c)
         return
@@ -36,3 +37,10 @@ class MongoConnection(object):
         except CursorNotFound as c:
             sys.exit(c)
         return trayectorias,mapa_curricular
+
+    def get_tray_bajas(self):
+        try:
+            curso_actual_bajas = self.coll_curso_actual_bajas.find({})
+        except CursorNotFound as c:
+            sys.exit(c)
+        return curso_actual_bajas

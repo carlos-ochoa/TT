@@ -22,7 +22,7 @@ def graficar_indice(title,distribuciones):
         "tooltip": {"trigger": "item", "formatter": "{a} <br/>{b} : {c} ({d}%)"},
         "visualMap": {
             "show": False,
-            "min": 80,
+            "min": 0,
             "max": 600,
             "inRange": {"colorLightness": [0, 1]},
         },
