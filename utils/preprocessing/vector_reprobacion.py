@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from collections import Counter
 from pymongo.errors import ConnectionFailure, CursorNotFound
@@ -9,6 +10,7 @@ def generar_vectores(trayectorias_reprobacion, mapa_curricular):
     data_source.connect()
     for m in mapa_curricular:
       mapa_curricular_materias = dict(m['materias'])
+    time.sleep(2)    
     materias_obligatorias = [materia for materia,tipo in mapa_curricular_materias.items() if tipo == 'OBLIGATORIA']
     vectores_totales = []
     for alumno in trayectorias_reprobacion:
