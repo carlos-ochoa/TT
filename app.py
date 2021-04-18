@@ -1,3 +1,4 @@
+import time
 import joblib
 import streamlit as st
 from utils.data import MongoConnection
@@ -50,3 +51,16 @@ if nivel_analisis == 'Datos generales':
 elif nivel_analisis == 'Datos por alumno':
     st.header('Busqueda por alumno')
     boleta = st.text_input('Boleta')
+    if st.button('Buscar') and len(boleta) > 0:
+        # Seccion para determinar la posibilidad de baja
+        alumno = data_source.get_tray_baja_boleta(boleta)
+        if len(list(alumno)) != 0:
+            dataset_tray_alumno = vector_bajas.generar_vectores(alumno)
+            prediccion_bajas = bajas_model.predict(dataset_tray_alumno)
+            if prediccion_bajas[0] == 1:
+                st.text('El estudiante es propenso a darse de baja este semestre')
+            else:
+                st.text('El estudiante no se daria de baja este semestre')
+        else:
+            st.text('Boleta no encontrada')
+        # Seccion para n variable

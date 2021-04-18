@@ -1,7 +1,9 @@
 import os
 import dns
+import time
 import pathlib
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from pymongo.errors import ConnectionFailure, CursorNotFound, BulkWriteError
 
 class MongoConnection(object):
@@ -44,3 +46,12 @@ class MongoConnection(object):
         except CursorNotFound as c:
             sys.exit(c)
         return curso_actual_bajas
+
+    def get_tray_baja_boleta(self, boleta):
+        try:
+            alumno = self.coll_curso_actual_bajas.find({'_id' : boleta})
+            alumno = list(alumno)
+            return alumno
+        except CursorNotFound as c:
+            sys.exit(c)
+        #return alumno
