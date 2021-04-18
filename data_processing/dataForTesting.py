@@ -41,7 +41,7 @@ def crear_trayectoria(boleta,cantidadMaterias):
     materias=[]
     materiasCursadas = materias_cursadas(boleta)
     i=0
-    nivel = 0
+    nivel = 1
     j=random.randrange(4, 10)
     #print(cantidadMaterias)
     if cantidadMaterias+j>12:
@@ -52,8 +52,7 @@ def crear_trayectoria(boleta,cantidadMaterias):
                 nivel = 4
                 if cantidadMaterias+j>41:
                     nivel =5
-                else:
-                    nivel =1
+
     while i<j:
         materia = random.choice(materias_obligatorias)
         materiasDisponibles = set(materias_obligatorias) - set(materiasCursadas)
