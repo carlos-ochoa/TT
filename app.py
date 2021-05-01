@@ -2,7 +2,8 @@ import time
 import joblib
 import streamlit as st
 from utils.data import MongoConnection
-from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia
+from utils.models import arima_adeudos
+from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia, vector_adeudos
 from utils.visualizations import indices
 from streamlit_echarts import st_echarts
 
@@ -12,12 +13,11 @@ data_source.connect()
 trayectorias_bajas = data_source.get_tray_bajas()
 trayectorias_reprobacion = data_source.get_tray_reprobacion()
 trayectorias = data_source.get_trayectorias()
+materias_obligatorias= data_source.get_materias()
 
 # Inicializacion de modelos
 bajas_model = joblib.load('modelos/dt_bajas_model.pkl')
 reprobacion_model = joblib.load('modelos/ClasificadorKnnIndiceReprobacion.pkl')
-
-
 
 nivel_analisis = st.sidebar.radio('Nivel de analisis',['Datos generales','Datos por alumno'])
 
@@ -74,11 +74,6 @@ if nivel_analisis == 'Datos generales':
     else:
         st.text(f'No hay informacion disponible')
 
-
-
-
-
-
     st.header('Indice de eficiencia terminal')
 
     eficiencia_expander = st.beta_expander(
@@ -104,6 +99,28 @@ if nivel_analisis == 'Datos generales':
         st.text(f'El indice de eficiencia terminal esperado para este semestre es: {indice_eficiencia*100}%')
     else:
         st.text(f'No hay informacion disponible')
+
+    #Seccion para la variable de procentaje de reprobación por materia
+    
+    st.header('Porcentaje de reprobación por materia')
+
+    materia_expander = st.beta_expander(
+        'Descripcion'
+    )
+
+    materia_expander.write('Este indice explica el porcentaje de alumnos que reprobarán cada materia por semestre')
+
+    materia = st.selectbox('Materia a analizar' ,materias_obligatorias
+    )
+    
+    vectores_adeudos_por_periodo=vector_adeudos.vectorizacion(materias_obligatorias)
+    materia_vectores=vector_adeudos.vectores_materias(vectores_adeudos_por_periodo,materia)
+    prediccion=arima_adeudos.modelo_materia(materia_vectores)
+    valor_prediccion=prediccion[0]
+    st.line_chart(materia_vectores['reprobados'])
+
+    st.text(f'El porcentaje de reprobados  esperado  para esta materia  en este semestre es: {valor_prediccion*100}%')
+    
 
 elif nivel_analisis == 'Datos por alumno':
     st.header('Busqueda por alumno')

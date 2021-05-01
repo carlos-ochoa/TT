@@ -29,7 +29,6 @@ class MongoConnection(object):
             self.coll_carreras = self.db['Carreras']
             self.coll_curso_actual_bajas = self.db['curso_actual_para_bajas']
             self.coll_curso_actual= self.db['curso_actual']
-
         except ConnectionFailure as c:
             sys.exit(c)
         return
@@ -71,3 +70,26 @@ class MongoConnection(object):
         except CursorNotFound as c:
             sys.exit(c)
         #return alumno
+    
+    def get_materias(self):
+        try:
+             mapa_curricular = self.coll_carreras.find({'nombre' : 'CONTADOR PUBLICO'})
+             for materia in mapa_curricular:
+                 mapa_curricular_materias = dict(materia['materias'])
+                 materias_obligatorias = [materia for materia,tipo in mapa_curricular_materias.items() if tipo == 'OBLIGATORIA']
+        except CursorNotFound as c:
+            sys.exit(c)
+        return materias_obligatorias
+    
+    def get_trayectorias_adeudos(self):
+        try:
+            periodos_permitidos = ['10/1','10/2', '11/1', '11/2', '12/1', '12/2', '13/1', '13/2', 
+                                   '14/1', '14/2', '15/1', '15/2', '16/1', '16/2', 
+                                    '17/1', '17/2', '18/1', '18/2', '19/1', '19/2',
+                                    '20/1']
+            trayectorias = self.coll_indice_bajas.find({'periodo_de_ingreso' :{'$in': periodos_permitidos}})
+        except CursorNotFound as c:
+            sys.exit(c)
+        return trayectorias
+
+    
