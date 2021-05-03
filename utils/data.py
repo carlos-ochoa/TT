@@ -49,8 +49,19 @@ class MongoConnection(object):
         return curso_actual_bajas
 
     def get_tray_reprobacion(self):
+        pipeline = [
+            { '$lookup':
+                {
+                   'from': "indice_bajas",
+                   'localField': "_id",
+                   'foreignField': "_id",
+                   'as': "curso_a"
+                }
+            }
+        ]
         try:
-            curso_actual = self.coll_curso_actual.find({})
+            curso_actual = self.db['curso_actual'].aggregate(pipeline)
+            curso_actual = list(curso_actual)
         except CursorNotFound as c:
             sys.exit(c)
         return curso_actual
@@ -70,7 +81,7 @@ class MongoConnection(object):
         except CursorNotFound as c:
             sys.exit(c)
         #return alumno
-    
+
     def get_materias(self):
         try:
              mapa_curricular = self.coll_carreras.find({'nombre' : 'CONTADOR PUBLICO'})
@@ -80,11 +91,11 @@ class MongoConnection(object):
         except CursorNotFound as c:
             sys.exit(c)
         return materias_obligatorias
-    
+
     def get_trayectorias_adeudos(self):
         try:
-            periodos_permitidos = ['10/1','10/2', '11/1', '11/2', '12/1', '12/2', '13/1', '13/2', 
-                                   '14/1', '14/2', '15/1', '15/2', '16/1', '16/2', 
+            periodos_permitidos = ['10/1','10/2', '11/1', '11/2', '12/1', '12/2', '13/1', '13/2',
+                                   '14/1', '14/2', '15/1', '15/2', '16/1', '16/2',
                                     '17/1', '17/2', '18/1', '18/2', '19/1', '19/2',
                                     '20/1']
             trayectorias = self.coll_indice_bajas.find({'periodo_de_ingreso' :{'$in': periodos_permitidos}})
@@ -92,4 +103,22 @@ class MongoConnection(object):
             sys.exit(c)
         return trayectorias
 
-    
+    def get_tray_baja_boleta_reprobacion(self, boleta):
+        pipeline = [
+            { '$lookup':
+                {
+                   'from': "indice_bajas",
+                   'localField': "_id",
+                   'foreignField': "_id",
+                   'as': "curso_a"
+                }
+            }
+        ]
+        try:
+            curso_actual = self.db['curso_actual'].aggregate(pipeline)
+            curso_actual = list(curso_actual)
+            for reg in curso_actual:
+                if reg['_id'] == boleta:
+                    return reg
+        except CursorNotFound as c:
+            sys.exit(c)

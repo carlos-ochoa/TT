@@ -36,8 +36,8 @@ if nivel_analisis == 'Datos generales':
 
     nivel = st.selectbox('Nivel a analizar',
     ('Total', '1', '2','3','4','5'))
-    
-    dataset_trayectorias_reprobacion = vector_reprobacion.generar_vectores(trayectorias_reprobacion, trayectorias[1])
+
+    dataset_trayectorias_reprobacion = vector_reprobacion.generar_vectores(trayectorias_reprobacion, trayectorias, nivel)
     predicciones_reprobacion = reprobacion_model.predict(dataset_trayectorias_reprobacion)
     distribucion_reprobacion, indice_reprobacion = vector_reprobacion.generar_distribucion(predicciones_reprobacion)
     if len(distribucion_reprobacion) != 0:
@@ -81,7 +81,7 @@ if nivel_analisis == 'Datos generales':
     )
 
     eficiencia_expander.write('Este indice explica el porcentaje de alumnos que terminaran su carrera satisfactoriamente aportando a la eficiencia terminal semestral')
-    
+
     #dataset_trayectorias_reprobacion = vector_reprobacion.generar_vectores(trayectorias_reprobacion, trayectorias[1])
     #predicciones_reprobacion = reprobacion_model.predict(dataset_trayectorias_reprobacion)
 
@@ -101,7 +101,7 @@ if nivel_analisis == 'Datos generales':
         st.text(f'No hay informacion disponible')
 
     #Seccion para la variable de procentaje de reprobación por materia
-    
+
     st.header('Porcentaje de reprobación por materia')
 
     materia_expander = st.beta_expander(
@@ -112,7 +112,7 @@ if nivel_analisis == 'Datos generales':
 
     materia = st.selectbox('Materia a analizar' ,materias_obligatorias
     )
-    
+
     vectores_adeudos_por_periodo=vector_adeudos.vectorizacion(materias_obligatorias)
     materia_vectores=vector_adeudos.vectores_materias(vectores_adeudos_por_periodo,materia)
     prediccion=arima_adeudos.modelo_materia(materia_vectores)
@@ -120,7 +120,7 @@ if nivel_analisis == 'Datos generales':
     st.line_chart(materia_vectores['reprobados'])
 
     st.text(f'El porcentaje de reprobados  esperado  para esta materia  en este semestre es: {valor_prediccion*100}%')
-    
+
 
 elif nivel_analisis == 'Datos por alumno':
     st.header('Busqueda por alumno')
@@ -128,13 +128,20 @@ elif nivel_analisis == 'Datos por alumno':
     if st.button('Buscar') and len(boleta) > 0:
         # Seccion para determinar la posibilidad de baja
         alumno = data_source.get_tray_baja_boleta(boleta)
+        alumnor = data_source.get_tray_baja_boleta_reprobacion(boleta)
         if len(list(alumno)) != 0:
             dataset_tray_alumno = vector_bajas.generar_vectores(alumno)
             prediccion_bajas = bajas_model.predict(dataset_tray_alumno)
+            dataset_trayectorias_reprobacion = vector_reprobacion.generar_vector_individual(alumnor, trayectorias)
+            predicciones_reprobacion = reprobacion_model.predict(dataset_trayectorias_reprobacion)
             if prediccion_bajas[0] == 1:
                 st.text('El estudiante es propenso a darse de baja este semestre')
             else:
                 st.text('El estudiante no se daria de baja este semestre')
+            if predicciones_reprobacion[0] == 1:
+                st.text('El estudiante es propenso a reprobar este semestre')
+            else:
+                st.text('El estudiante no reprobará este semestre')
         else:
             st.text('Boleta no encontrada')
         # Seccion para n variable
