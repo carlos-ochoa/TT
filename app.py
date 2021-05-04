@@ -3,7 +3,7 @@ import joblib
 import streamlit as st
 from utils.data import MongoConnection
 from utils.models import arima_adeudos
-from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia, vector_adeudos
+from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia, vector_adeudos, vector_dictamenes
 from utils.visualizations import indices
 from streamlit_echarts import st_echarts
 
@@ -13,11 +13,13 @@ data_source.connect()
 trayectorias_bajas = data_source.get_tray_bajas()
 trayectorias_reprobacion = data_source.get_tray_reprobacion()
 trayectorias = data_source.get_trayectorias()
-materias_obligatorias= data_source.get_materias()
+materias_obligatorias = data_source.get_materias()
+dictamenes = data_source.get_dictamenes()
 
 # Inicializacion de modelos
 bajas_model = joblib.load('modelos/dt_bajas_model.pkl')
 reprobacion_model = joblib.load('modelos/ClasificadorKnnIndiceReprobacion.pkl')
+dictamenes_model = joblib.load('modelos/DTDictamenes.pkl')
 
 nivel_analisis = st.sidebar.radio('Nivel de analisis',['Datos generales','Datos por alumno'])
 
@@ -121,6 +123,29 @@ if nivel_analisis == 'Datos generales':
 
     st.text(f'El porcentaje de reprobados  esperado  para esta materia  en este semestre es: {valor_prediccion*100}%')
 
+    # SECCION PARA VARIABLE DE CUMPLIMIENTO DE DICTAMEN
+
+    st.header('Cumplimiento de dictamenes')
+
+    dictamen_expander = st.beta_expander(
+        'Descripcion'
+    )
+
+    dictamen_expander.write('Este indice explica el indice esperado de alumnos dictaminados que cumpliran su materia')
+
+    #materia = st.selectbox('Materia a analizar' ,materias_obligatorias)
+
+    vectores_dictamenes = vector_dictamenes.generar_vectores(dictamenes, materias_obligatorias)
+    predicciones = dictamenes_model.predict(vectores_dictamenes)
+
+    distribucion_dictamenes, indice_dictamenes = vector_dictamenes.generar_distribucion(predicciones)
+    if len(distribucion_dictamenes) != 0:
+        pie = indices.graficar_indice('Cumplimiento de dictamen', distribucion_dictamenes)
+        print(distribucion_dictamenes)
+        st_echarts(options = pie)
+        st.text(f'El indice de cumplimiento de dictamenes esperado para este semestre es: {indice_dictamenes*100}%')
+    else:
+        st.text(f'No hay informacion disponible')
 
 elif nivel_analisis == 'Datos por alumno':
     st.header('Busqueda por alumno')

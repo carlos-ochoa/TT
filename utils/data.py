@@ -28,7 +28,8 @@ class MongoConnection(object):
             self.coll_indice_bajas = self.db['indice_bajas']
             self.coll_carreras = self.db['Carreras']
             self.coll_curso_actual_bajas = self.db['curso_actual_para_bajas']
-            self.coll_curso_actual= self.db['curso_actual']
+            self.coll_curso_actual = self.db['curso_actual']
+            self.coll_dictamenes = self.db['curso_actual_dictamenes']
         except ConnectionFailure as c:
             sys.exit(c)
         return
@@ -91,6 +92,13 @@ class MongoConnection(object):
         except CursorNotFound as c:
             sys.exit(c)
         return materias_obligatorias
+
+    def get_dictamenes(self):
+        try:
+            dictamenes = self.coll_dictamenes.find({})
+        except CursorNotFound as c:
+            sys.exit(c)
+        return dictamenes
 
     def get_trayectorias_adeudos(self):
         try:
