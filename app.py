@@ -2,6 +2,8 @@ import time
 import joblib
 import streamlit as st
 import hashlib
+import secrets
+import string
 import utils.send_mail as mail
 from utils.data import MongoConnection
 from utils.models import arima_adeudos
@@ -181,7 +183,10 @@ elif choice == "SignUp":
     paterno = form.text_input("Apellido Paterno")
     materno = form.text_input("Apellido Materno")
     email = form.text_input("E-mail")
-    password = form.text_input("Password",type='password')
+    #password = form.text_input("Password",type='password')
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(10))
+    print(password)
     password_hash= hashlib.sha256(str.encode(password)).hexdigest()
     submit = form.form_submit_button('Submit')
     nombre_completo=nombre +' '+ paterno + ' ' + materno
