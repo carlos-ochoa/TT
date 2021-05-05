@@ -4,7 +4,7 @@ import streamlit as st
 import hashlib
 import secrets
 import string
-import utils.send_mail as mail
+import utils.send as mail
 from utils.data import MongoConnection
 from utils.models import arima_adeudos
 from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia, vector_adeudos, vector_dictamenes
