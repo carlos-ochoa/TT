@@ -30,6 +30,7 @@ class MongoConnection(object):
             self.coll_curso_actual_bajas = self.db['curso_actual_para_bajas']
             self.coll_curso_actual = self.db['curso_actual']
             self.coll_dictamenes = self.db['curso_actual_dictamenes']
+            self.coll_usuarios=self.db['usuarios']
         except ConnectionFailure as c:
             sys.exit(c)
         return
@@ -128,5 +129,19 @@ class MongoConnection(object):
             for reg in curso_actual:
                 if reg['_id'] == boleta:
                     return reg
+        except CursorNotFound as c:
+            sys.exit(c)
+
+    def insertar_usuario(self, email,nombre,paterno,materno, password):
+        try:
+            query = { "_id": email, "nombre": nombre,"paterno":paterno, "materno":materno, "password":password}
+            self.coll_usuarios.insert_one(query)
+        except CursorNotFound as c:
+            sys.exit(c)
+
+    def get_usuario(self,email):
+        try:
+            usuario= self.coll_usuarios.find_one({ "_id":email })
+            return usuario
         except CursorNotFound as c:
             sys.exit(c)
