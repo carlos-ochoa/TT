@@ -101,6 +101,14 @@ class MongoConnection(object):
             sys.exit(c)
         return dictamenes
 
+    def get_dictamen_alumno(self, boleta):
+        try:
+            dictamenes = self.coll_dictamenes.find({'boleta' : boleta})
+            dictamen = list(dictamenes)
+        except CursorNotFound as c:
+            sys.exit(c)
+        return dictamen
+
     def get_trayectorias_adeudos(self):
         try:
             periodos_permitidos = ['10/1','10/2', '11/1', '11/2', '12/1', '12/2', '13/1', '13/2',

@@ -150,6 +150,33 @@ if choice == "Home":
             print(distribucion_dictamenes)
             st_echarts(options = pie)
             st.text(f'El indice de cumplimiento de dictamenes esperado para este semestre es: {indice_dictamenes*100}%')
+elif nivel_analisis == 'Datos por alumno':
+    st.header('Busqueda por alumno')
+    boleta = st.text_input('Boleta')
+    if st.button('Buscar') and len(boleta) > 0:
+        # Seccion para determinar la posibilidad de baja
+        alumno = data_source.get_tray_baja_boleta(boleta)
+        alumnor = data_source.get_tray_baja_boleta_reprobacion(boleta)
+        dictamen_alumno = data_source.get_dictamen_alumno(boleta)
+        if len(list(alumno)) != 0:
+            dataset_tray_alumno = vector_bajas.generar_vectores(alumno)
+            prediccion_bajas = bajas_model.predict(dataset_tray_alumno)
+            dataset_trayectorias_reprobacion = vector_reprobacion.generar_vector_individual(alumnor, trayectorias)
+            predicciones_reprobacion = reprobacion_model.predict(dataset_trayectorias_reprobacion)
+            if len(dictamen_alumno) > 0:
+                print(dictamen_alumno)
+                vector_dictamen = vector_dictamenes.generar_vectores(dictamen_alumno, materias_obligatorias)
+                prediccion_dictamen = dictamenes_model.predict(vector_dictamen)
+                estatus_dictamen = "Propenso a aprobar" if prediccion_dictamen[0] == 1 else "Propenso a incumplir"
+                st.text(f'El estudiante tiene un dictamen activo con el siguiente estatus: {estatus_dictamen}')
+            if prediccion_bajas[0] == 1:
+                st.text('El estudiante es propenso a darse de baja este semestre')
+            else:
+                st.text('El estudiante no se daria de baja este semestre')
+            if predicciones_reprobacion[0] == 1:
+                st.text('El estudiante es propenso a reprobar este semestre')
+            else:
+                st.text('El estudiante no reprobará este semestre')
         else:
             st.text(f'No hay informacion disponible')
 
