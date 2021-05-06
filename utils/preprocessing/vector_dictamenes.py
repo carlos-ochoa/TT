@@ -2,6 +2,22 @@ import numpy as np
 import pandas as pd
 from collections import Counter
 
+def generar_vectores_filtrado(dictamenes, materias_obligatorias, materia_dictamen):
+    vector, vectores = [],[]
+    periodos_permitidos = ['10/1','10/2', '11/1', '11/2', '12/1', '12/2', '13/1',
+                       '13/2', '14/1', '14/2', '15/1', '15/2', '16/1', '16/2', 
+                       '17/1', '17/2', '18/1', '18/2', '19/1', '19/2','20/1','20/2']
+    for d in dictamenes:
+        if d['materia'] == materia_dictamen:
+            materia = materias_obligatorias.index(d['materia']) if d['materia'] in materias_obligatorias else 50
+            vector.append(materia)
+            vector.append(periodos_permitidos.index(d['inicio']) - periodos_permitidos.index(d['periodo_de_ingreso']))
+            vector.append(d['materias_cursadas'])
+            vectores.append(vector.copy())
+            vector.clear()
+    dictamenes.rewind()
+    return np.array(vectores)
+
 def generar_vectores(dictamenes, materias_obligatorias):
     vector, vectores = [],[]
     periodos_permitidos = ['10/1','10/2', '11/1', '11/2', '12/1', '12/2', '13/1',
@@ -14,8 +30,17 @@ def generar_vectores(dictamenes, materias_obligatorias):
         vector.append(d['materias_cursadas'])
         vectores.append(vector.copy())
         vector.clear()
-
+    if not isinstance(dictamenes, list):
+        dictamenes.rewind()
     return np.array(vectores)
+
+def get_materias(dictamenes):
+    materias_dictamenes = set()
+    materias_dictamenes.add('Total')
+    for d in dictamenes:
+        materias_dictamenes.add(d['materia'])
+    dictamenes.rewind()
+    return sorted(list(materias_dictamenes))
 
 def generar_distribucion(predicciones):
     distribucion = []

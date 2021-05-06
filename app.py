@@ -141,9 +141,13 @@ if choice == "Home":
 
         dictamen_expander.write('Este indice explica el indice esperado de alumnos dictaminados que cumpliran su materia')
 
-        #materia = st.selectbox('Materia a analizar' ,materias_obligatorias)
+        materias_dictamen = vector_dictamenes.get_materias(dictamenes)
+        materia_dictamen = st.selectbox('Materia a analizar' ,materias_dictamen)
 
-        vectores_dictamenes = vector_dictamenes.generar_vectores(dictamenes, materias_obligatorias)
+        if materia_dictamen == 'Total':
+            vectores_dictamenes = vector_dictamenes.generar_vectores(dictamenes, materias_obligatorias)
+        else:
+            vectores_dictamenes = vector_dictamenes.generar_vectores_filtrado(dictamenes, materias_obligatorias, materia_dictamen)
         predicciones = dictamenes_model.predict(vectores_dictamenes)
 
         distribucion_dictamenes, indice_dictamenes = vector_dictamenes.generar_distribucion(predicciones)
@@ -160,11 +164,21 @@ if choice == "Home":
             # Seccion para determinar la posibilidad de baja
             alumno = data_source.get_tray_baja_boleta(boleta)
             alumnor = data_source.get_tray_baja_boleta_reprobacion(boleta)
+            dictamen_alumno = data_source.get_dictamen_alumno(boleta)
             if len(list(alumno)) != 0:
                 dataset_tray_alumno = vector_bajas.generar_vectores(alumno)
                 prediccion_bajas = bajas_model.predict(dataset_tray_alumno)
                 dataset_trayectorias_reprobacion = vector_reprobacion.generar_vector_individual(alumnor, trayectorias)
                 predicciones_reprobacion = reprobacion_model.predict(dataset_trayectorias_reprobacion)
+                if len(dictamen_alumno) > 0:
+                    vector_dictamen = vector_dictamenes.generar_vectores(dictamen_alumno, materias_obligatorias)
+                    prediccion_dictamen = dictamenes_model.predict(vector_dictamen)
+                    dalumno = dict(dictamen_alumno[0])
+                    m = dalumno['materia']
+                    st.text(f'Dictamen activo: {m}')
+                    resultado_dictamen = 'Cumple' if prediccion_dictamen[0] == 1 else 'No cumple'
+                    st.text(f'Probable resultado del dictamen: {resultado_dictamen}')
+                    #st.text(f'Materia: {dalumno['materia']}')    
                 if prediccion_bajas[0] == 1:
                     st.text('El estudiante es propenso a darse de baja este semestre')
                 else:
