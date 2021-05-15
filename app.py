@@ -7,7 +7,7 @@ import string
 import utils.send as mail
 from utils.data import MongoConnection
 from utils.models import arima_adeudos
-from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia, vector_adeudos, vector_dictamenes
+from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia, vector_adeudos, vector_dictamenes, vector_ocupabilidad
 from utils.visualizations import indices
 from streamlit_echarts import st_echarts
 from utils.pdfCreation import pdf
@@ -126,11 +126,29 @@ if choice == "Home":
 
         vectores_adeudos_por_periodo=vector_adeudos.vectorizacion(materias_obligatorias)
         materia_vectores=vector_adeudos.vectores_materias(vectores_adeudos_por_periodo,materia)
-        prediccion=arima_adeudos.modelo_materia(materia_vectores)
+        prediccion=arima_adeudos.modelo_materia(materia_vectores['reprobados'])
         valor_prediccion=prediccion[0]
         st.line_chart(materia_vectores['reprobados'])
 
         st.text(f'El porcentaje de reprobados  esperado  para esta materia  en este semestre es: {valor_prediccion*100}%')
+
+        # Seccion para la variable de Ocupabilidad
+        st.header('Ocupabilidad')
+        ocupabilidad_expander = st.beta_expander(
+            'Descripcion'
+        )
+
+        materia_expander.write('Este indice determina la cantidad de alumnos que cursaran cada materia el siguiente periodo')
+        materia_ocupabilidad = st.selectbox('Materia a analizar' ,materias_obligatorias
+        , key = "selectOcupabilidad")
+
+        ocupabilidad_vectores=vector_ocupabilidad.vectorizacion()
+        ocupabilidad_materia=vector_ocupabilidad.vector_materia(ocupabilidad_vectores,materia_ocupabilidad)
+        st.line_chart(ocupabilidad_materia['inscritos'])
+        prediccion_ocupabilidad=arima_adeudos.modelo_materia(ocupabilidad_materia['inscritos'])
+        valor_prediccion_ocupabilidad=prediccion_ocupabilidad[0]
+
+        st.text(f'El número de  alumnos que cursarán  esta materia  es de : {valor_prediccion_ocupabilidad}')
 
         # SECCION PARA VARIABLE DE CUMPLIMIENTO DE DICTAMEN
 
