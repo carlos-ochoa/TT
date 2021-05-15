@@ -10,6 +10,7 @@ from utils.models import arima_adeudos
 from utils.preprocessing import bajas, vector_bajas, vector_reprobacion, vector_eficiencia, vector_adeudos, vector_dictamenes
 from utils.visualizations import indices
 from streamlit_echarts import st_echarts
+from utils.pdfCreation import pdf
 
 data_source = MongoConnection()
 data_source.connect()
@@ -160,7 +161,8 @@ if choice == "Home":
     elif nivel_analisis == 'Datos por alumno':
         st.header('Busqueda por alumno')
         boleta = st.text_input('Boleta')
-        if st.button('Buscar') and len(boleta) > 0:
+        buscar = st.checkbox('Buscar')
+        if buscar and len(boleta) > 0:
             # Seccion para determinar la posibilidad de baja
             alumno = data_source.get_tray_baja_boleta(boleta)
             alumnor = data_source.get_tray_baja_boleta_reprobacion(boleta)
@@ -178,7 +180,10 @@ if choice == "Home":
                     st.text(f'Dictamen activo: {m}')
                     resultado_dictamen = 'Cumple' if prediccion_dictamen[0] == 1 else 'No cumple'
                     st.text(f'Probable resultado del dictamen: {resultado_dictamen}')
-                    #st.text(f'Materia: {dalumno['materia']}')    
+                    #st.text(f'Materia: {dalumno['materia']}')
+                else :
+                    m = 'ninguna'
+                    prediccion_dictamen[0] = 2
                 if prediccion_bajas[0] == 1:
                     st.text('El estudiante es propenso a darse de baja este semestre')
                 else:
@@ -187,8 +192,14 @@ if choice == "Home":
                     st.text('El estudiante es propenso a reprobar este semestre')
                 else:
                     st.text('El estudiante no reprobará este semestre')
+                reportes = st.button("Generar reportes")
+                if reportes:
+                    #variables: boletas,predicciones_reprobacion[0], predicciones_baja[0],dictamen,nombredictamen
+                    pdf.create_individual_report(boleta,predicciones_reprobacion[0],prediccion_bajas[0],prediccion_dictamen[0],m)
+
             else:
                 st.text('Boleta no encontrada')
+
             # Seccion para n variable
 elif choice == "SignUp":
     st.subheader("Crear nueva cuenta")
