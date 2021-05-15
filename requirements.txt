@@ -12,10 +12,12 @@ certifi==2020.12.5
 cffi==1.14.5
 chardet==4.0.0
 click==7.1.2
+colorama==0.4.4
 decorator==4.4.2
 defusedxml==0.7.1
 dnspython==1.16.0
 entrypoints==0.3
+fpdf==1.7.2
 gitdb==4.0.7
 GitPython==3.1.14
 idna==2.10
@@ -44,6 +46,7 @@ pandas==1.2.3
 pandocfilters==1.4.3
 parso==0.8.1
 pathlib==1.0.1
+patsy==0.5.1
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==8.1.2
@@ -59,12 +62,19 @@ pymongo==3.11.3
 pyparsing==2.4.7
 pyrsistent==0.17.3
 python-dateutil==2.8.1
+python-http-client==3.3.2
 pytz==2021.1
+pywin32==300
+pywinpty==1.0.1
 pyzmq==22.0.3
 requests==2.25.1
+scipy==1.6.3
 Send2Trash==1.5.0
+sendgrid==6.7.0
 six==1.15.0
 smmap==4.0.0
+starkbank-ecdsa==1.1.0
+statsmodels==0.12.2
 streamlit==0.81.1
 terminado==0.9.3
 testpath==0.4.4
@@ -79,5 +89,3 @@ watchdog==2.0.2
 wcwidth==0.2.5
 webencodings==0.5.1
 widgetsnbextension==3.5.1
-statsmodels==0.12.2
-sendgrid==6.7.0
