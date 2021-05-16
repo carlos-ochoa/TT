@@ -137,7 +137,7 @@ if choice == "Home":
             'Descripcion'
         )
 
-        materia_expander.write('Este indice determina la cantidad de alumnos que cursaran cada materia el siguiente periodo')
+        ocupabilidad_expander.write('Este indice determina la cantidad de alumnos que cursarán cada materia el siguiente periodo')
         materia_ocupabilidad = st.selectbox('Materia a analizar' ,materias_obligatorias
         , key = "selectOcupabilidad")
 
