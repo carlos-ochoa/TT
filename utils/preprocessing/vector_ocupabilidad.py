@@ -1,7 +1,14 @@
+import os 
+from pathlib import Path
+import sys
 import pandas as pd
 import numpy as np
 
-path_json = 'utils\preprocessing\info_ocupabilidad.txt'
+
+ruta = Path ("utils", "preprocessing")
+pass_file = 'info_ocupabilidad.txt'
+path_json =  os.path.join(ruta,pass_file)
+print(path_json)
 periodos = ['20212','20211','20202','20192','20191','20182','20181','20172','20171','20162','20161','20152'
 '20151','20142','20141','20132','20131','20122','20121','20112','20111','20102','20101','20092','20091']
 
