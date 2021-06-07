@@ -42,7 +42,7 @@ if choice == "Home":
             'Descripcion'
         )
 
-        reprobacion_expander.write('Este indice explica el porcentaje de alumnos que pueden caer en situacion de reprobación de almenos una materia durante el semestre en curso. \n Se pueden \
+        reprobacion_expander.write('Este indice explica el porcentaje de alumnos que pueden caer en situacion de reprobación de almenos una materia durante el nivel en curso. \n Se pueden \
                 elegir los niveles de analisis para identificar los grupos semestrales en mayor riesgo.')
 
         nivel = st.selectbox('Nivel a analizar',
@@ -214,7 +214,6 @@ if choice == "Home":
                 if reportes:
                     #variables: boletas,predicciones_reprobacion[0], predicciones_baja[0],dictamen,nombredictamen
                     pdf.create_individual_report(boleta,predicciones_reprobacion[0],prediccion_bajas[0],prediccion_dictamen[0],m)
-
             else:
                 st.text('Boleta no encontrada')
 
