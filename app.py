@@ -53,7 +53,7 @@ if choice == "Home":
         predicciones_reprobacion = reprobacion_model.predict(dataset_trayectorias_reprobacion)
         distribucion_reprobacion, indice_reprobacion = vector_reprobacion.generar_distribucion(predicciones_reprobacion)
         if len(distribucion_reprobacion) != 0:
-            pie = indices.graficar_indice('Alumnos que reprobaran', distribucion_reprobacion)
+            pie = indices.graficar_indice('Alumnos que reprobaran', distribucion_reprobacion,'Estado de reprobacion')
             print(distribucion_reprobacion)
             st_echarts(options = pie)
             st.text(f'El indice de reprobacion esperado para este semestre es: {indice_reprobacion*100}%')
@@ -83,7 +83,7 @@ if choice == "Home":
         distribucion_bajas, indice_bajas = vector_bajas.generar_distribucion(predicciones_bajas)
 
         if len(distribucion_bajas) != 0:
-            pie = indices.graficar_indice('Alumnos que daran baja', distribucion_bajas)
+            pie = indices.graficar_indice('Alumnos que daran baja', distribucion_bajas,'Estado de baja')
             st_echarts(options = pie)
             st.text(f'El indice de bajas esperado para este semestre es: {indice_bajas*100}%')
             print(distribucion_bajas)
@@ -111,7 +111,7 @@ if choice == "Home":
 
         distribucion_eficiencia, indice_eficiencia = vector_eficiencia.generar_distribucion(predicciones_egresados)
         if len(distribucion_eficiencia) != 0:
-            pie = indices.graficar_indice('Alumnos que egresaran', distribucion_eficiencia)
+            pie = indices.graficar_indice('Alumnos que egresaran', distribucion_eficiencia,'Egresa')
             print(distribucion_eficiencia)
             st_echarts(options = pie)
             st.text(f'El indice de eficiencia terminal esperado para este semestre es: {indice_eficiencia*100}%')
@@ -188,7 +188,7 @@ if choice == "Home":
 
         distribucion_dictamenes, indice_dictamenes = vector_dictamenes.generar_distribucion(predicciones)
         if len(distribucion_dictamenes) != 0:
-            pie = indices.graficar_indice('Cumplimiento de dictamen', distribucion_dictamenes)
+            pie = indices.graficar_indice('Cumplimiento de dictamen', distribucion_dictamenes,'Cumplimiento')
             print(distribucion_dictamenes)
             st_echarts(options = pie)
             st.text(f'El indice de cumplimiento de dictamenes esperado para este semestre es: {indice_dictamenes*100}%')

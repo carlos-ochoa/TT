@@ -6,7 +6,7 @@ import numpy as np
 
 
 ruta = Path ("utils", "preprocessing")
-pass_file = 'info_ocupabilidad.txt'
+pass_file = 'info_ocupabilidad.json'
 path_json =  os.path.join(ruta,pass_file)
 print(path_json)
 periodos = ['20212','20211','20202','20192','20191','20182','20181','20172','20171','20162','20161','20152'

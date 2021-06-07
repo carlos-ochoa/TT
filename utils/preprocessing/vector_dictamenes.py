@@ -36,11 +36,12 @@ def generar_vectores(dictamenes, materias_obligatorias):
 
 def get_materias(dictamenes):
     materias_dictamenes = set()
-    materias_dictamenes.add('Total')
     for d in dictamenes:
         materias_dictamenes.add(d['materia'])
     dictamenes.rewind()
-    return sorted(list(materias_dictamenes))
+    materias_dictamenes = sorted(list(materias_dictamenes))
+    materias_dictamenes.insert(0,'Total')
+    return materias_dictamenes
 
 def generar_distribucion(predicciones):
     distribucion = []

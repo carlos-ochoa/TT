@@ -10,7 +10,7 @@ Ejemplo :
 ]
 '''
 
-def graficar_indice(title,distribuciones):
+def graficar_indice(title,distribuciones,name):
     pie_options = {
         "backgroundColor": "#2c343c",
         "title": {
@@ -28,7 +28,7 @@ def graficar_indice(title,distribuciones):
         },
         "series": [
             {
-                "name": "Estado de baja",
+                "name": name,
                 "type": "pie",
                 "radius": "55%",
                 "center": ["50%", "50%"],
