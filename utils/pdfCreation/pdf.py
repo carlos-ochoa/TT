@@ -1,15 +1,87 @@
 from fpdf import FPDF
 import base64
 import streamlit as st
-
+import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import os
 
 def create_download_link(val, filename):
     b64 = base64.b64encode(val)  # val looks like b'...'
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Download file</a>'
 
-def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen ):
+def  create_plotPNG(distribucion,nombre):
+    nombres = []
+    data = []
+    for i in distribucion:
+        nombres.append(i['name'])
+        data.append(i['value'])
+    fig = plt.figure(figsize =(10, 7))
+    plt.pie(data, labels = nombres,autopct='%1.1f%%')
+    plt.title("Distribución de "+nombre,bbox={'facecolor':'0.8','pad':5})
+    path = "utils/pdfCreation/images/" + nombre +".png"
+    plt.savefig(path,dpi=300)
+    print(os.getcwd())
+    print('png creado')
+
+def create_plotPNG_line(vector, nombre, materia):
+
+    indexes = []
+    values = []
+    plt.figure(figsize=(10, 7), dpi=70)
+    for index, value in vector.items():
+    #    print(f"Index : {index}, Value : {value}")
+        indexes.append(index)
+        values.append(value)
+    plt.plot(indexes, values)
+    plt.title(nombre + materia)
+    plt.xlabel('Año')
+    plt.ylabel('Porcentaje ' + materia)
+    path = "utils/pdfCreation/images/" + nombre +".png"
+    plt.savefig(path)
+    print('png creado')
+
+def create_general_report(distribucion_reprobacion, distribucion_bajas,distribucion_eficiencia, distribucion_dictamenes, materia_vectores, ocupabilidad_materia, materia,materia_ocupabilidad):
     ancho = 210
     alto = 297
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font('Arial','B',16)
+    pdf.set_text_color(r =17, g = 193, b = 244)
+    pdf.ln(15)
+    c = ''
+    numero = 0
+    while numero <= 30:
+        c = c + '\t'
+        numero = numero + 1
+    pdf.write(5,c + 'Reporte de identificación de riesgos')
+    pdf.ln(30)
+    create_plotPNG(distribucion_reprobacion,"reprobacion")
+    create_plotPNG(distribucion_bajas,"bajas")
+    create_plotPNG(distribucion_eficiencia,"eficienciaTerminal")
+    create_plotPNG(distribucion_dictamenes,"dictamen")
+    create_plotPNG_line(materia_vectores, "reprobacionMateria", materia)
+    create_plotPNG_line(ocupabilidad_materia, "ocupabilidadMateria", materia_ocupabilidad)
+
+    #
+    pdf.image("utils/pdfCreation/images/escudoIPN.jpg",5,10,50,40)
+    pdf.image("utils/pdfCreation/images/escudoESCA.png",5,160,50,40)
+    pdf.image("utils/pdfCreation/images/bajas.png",5,50,ancho/2-5   )
+    pdf.image("utils/pdfCreation/images/dictamen.png",ancho/2+5,50,ancho/2-5)
+    pdf.image("utils/pdfCreation/images/eficienciaTerminal.png",5,110,ancho/2-5)
+    pdf.image("utils/pdfCreation/images/reprobacion.png",ancho/2+5,110,ancho/2-5)
+    pdf.image("utils/pdfCreation/images/ocupabilidadMateria.png",5,170,ancho/2-5)
+    pdf.image("utils/pdfCreation/images/reprobacionMateria.png",ancho/2+5,170,ancho/2-5)
+
+
+
+    #pdf.image(os.path.abspath('escudoESCA.png'),160,10,40,40)
+    pdf.set_text_color(r =0, g = 0, b = 0)
+    html = create_download_link(pdf.output(dest="S").encode("latin-1"), 'Riesgos generales')
+    st.markdown(html, unsafe_allow_html=True)
+
+
+def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen ):
+
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font('Arial','B',16)
@@ -81,7 +153,7 @@ def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen
     pdf.write(5,'Dictamen')
     pdf.ln(10)
     pdf.set_font('Arial','',10)
-    pdf.write(4,'Este modelo nos permite predecir si es que el alumno esta en riesgo de reprobar alguna de las materias que inscribió en su nuevo curso.')
+    pdf.write(4,'Este modelo nos permite predecir si es que el alumno esta en riesgo de no cumplir su dictamen.')
     pdf.ln(10)
 
     ###
@@ -89,13 +161,13 @@ def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen
     pdf.write(5,'Indice de baja')
     pdf.ln(10)
     pdf.set_font('Arial','',10)
-    pdf.write(4,'Este modelo nos permite predecir si es que el alumno esta en riesgo de reprobar alguna de las materias que inscribió en su nuevo curso.')
+    pdf.write(4,'Este modelo nos permite predecir si es que el alumno esta en riesgo de darse de baja.')
     pdf.ln(10)
     ###
 
 
-    pdf.image("utils/pdfCreation/escudoIPN.jpg",5,10,50,40)
-    pdf.image("utils/pdfCreation/escudoESCOM.jpg",160,10,40,40)
+    pdf.image("utils/pdfCreation/images/escudoIPN.jpg",5,10,50,40)
+    pdf.image("utils/pdfCreation/images/escudoESCA.png",160,10,40,40)
 
     pdf.output('test.pdf','F')
     nombre = 'reporte de ' + boleta
