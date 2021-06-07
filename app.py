@@ -36,6 +36,7 @@ if choice == "Home":
 
     if nivel_analisis == 'Datos generales':
 
+        ################## Reprobracion
         st.header('Indice de reprobacion')
 
         reprobacion_expander = st.beta_expander(
@@ -58,6 +59,9 @@ if choice == "Home":
             st.text(f'El indice de reprobacion esperado para este semestre es: {indice_reprobacion*100}%')
         else:
             st.text(f'No hay informacion disponible')
+
+
+        ################### desercion
 
         st.header('Indice de desercion')
 
@@ -82,6 +86,7 @@ if choice == "Home":
             pie = indices.graficar_indice('Alumnos que daran baja', distribucion_bajas)
             st_echarts(options = pie)
             st.text(f'El indice de bajas esperado para este semestre es: {indice_bajas*100}%')
+            print(distribucion_bajas)
         else:
             st.text(f'No hay informacion disponible')
 
@@ -90,6 +95,8 @@ if choice == "Home":
         eficiencia_expander = st.beta_expander(
             'Descripcion'
         )
+
+        ################### eficiencia terminal
 
         eficiencia_expander.write('Este indice explica el porcentaje de alumnos que terminaran su carrera satisfactoriamente aportando a la eficiencia terminal semestral')
 
@@ -129,6 +136,11 @@ if choice == "Home":
         prediccion=arima_adeudos.modelo_materia(materia_vectores['reprobados'])
         valor_prediccion=prediccion[0]
         st.line_chart(materia_vectores['reprobados'])
+        #########
+        print('uwu')
+        print(materia_vectores['reprobados'])
+
+        #############
 
         st.text(f'El porcentaje de reprobados  esperado  para esta materia  en este semestre es: {valor_prediccion*100}%')
 
@@ -145,6 +157,11 @@ if choice == "Home":
         ocupabilidad_vectores=vector_ocupabilidad.vectorizacion()
         ocupabilidad_materia=vector_ocupabilidad.vector_materia(ocupabilidad_vectores,materia_ocupabilidad)
         st.line_chart(ocupabilidad_materia['inscritos'])
+
+        print('XDDDDDDDD')
+        print(ocupabilidad_materia['inscritos'])
+
+
         prediccion_ocupabilidad=arima_adeudos.modelo_materia(ocupabilidad_materia['inscritos'])
         valor_prediccion_ocupabilidad=prediccion_ocupabilidad[0]
 
@@ -175,6 +192,15 @@ if choice == "Home":
             print(distribucion_dictamenes)
             st_echarts(options = pie)
             st.text(f'El indice de cumplimiento de dictamenes esperado para este semestre es: {indice_dictamenes*100}%')
+
+
+        ###Reporte###
+        reportes = st.button("Generar reportes")
+        if reportes:
+            #variables: boletas,predicciones_reprobacion[0], predicciones_baja[0],dictamen,nombredictamen
+            pdf.create_general_report(distribucion_reprobacion, distribucion_bajas,distribucion_eficiencia,distribucion_dictamenes,materia_vectores['reprobados'],ocupabilidad_materia['inscritos'], materia,materia_ocupabilidad)
+
+
 
     elif nivel_analisis == 'Datos por alumno':
         st.header('Busqueda por alumno')
