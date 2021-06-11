@@ -10,7 +10,7 @@ Ejemplo :
 ]
 '''
 
-def graficar_indice(title,distribuciones,name):
+def graficar_indice(title,distribuciones,name,color):
     pie_options = {
         "backgroundColor": "#2c343c",
         "title": {
@@ -42,7 +42,7 @@ def graficar_indice(title,distribuciones,name):
                     "length2": 20,
                 },
                 "itemStyle": {
-                    "color": "#c23531",
+                    "color": color,
                     "shadowBlur": 200,
                     "shadowColor": "rgba(0, 0, 0, 0.5)",
                 },
