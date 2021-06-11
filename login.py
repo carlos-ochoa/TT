@@ -2,6 +2,17 @@ import streamlit as st
 import hashlib
 import subprocess
 from utils.data import MongoConnection
+
+import requests
+
+from streamlit_lottie import st_lottie
+
+def load_lottieurl(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
 data_source = MongoConnection()
 data_source.connect()
 
@@ -12,6 +23,9 @@ def main():
     email = form.text_input("E-mail")
     password = form.text_input("Password",type='password')
     submit = form.form_submit_button('Login')
+    lottie_url = "https://assets1.lottiefiles.com/packages/lf20_9kZ5Pz.json"
+    lottie_json = load_lottieurl(lottie_url)
+    st_lottie(lottie_json)
     if submit:
         hashed_password =  hashlib.sha256(str.encode(password)).hexdigest()
         usuario = data_source.get_usuario(email)

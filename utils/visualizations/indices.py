@@ -12,12 +12,12 @@ Ejemplo :
 
 def graficar_indice(title,distribuciones,name,color):
     pie_options = {
-        "backgroundColor": "#2c343c",
+        "backgroundColor": "#FFFFFF",
         "title": {
             "text": title,
             "left": "center",
             "top": 20,
-            "textStyle": {"color": "#ccc"},
+            "textStyle": {"color": "#952F57"},
         },
         "tooltip": {"trigger": "item", "formatter": "{a} <br/>{b} : {c} ({d}%)"},
         "visualMap": {
@@ -34,9 +34,9 @@ def graficar_indice(title,distribuciones,name,color):
                 "center": ["50%", "50%"],
                 "data": distribuciones,
                 "roseType": "radius",
-                "label": {"color": "rgba(255, 255, 255, 0.3)"},
+                "label": {"color": "#952F57"},
                 "labelLine": {
-                    "lineStyle": {"color": "rgba(255, 255, 255, 0.3)"},
+                    "lineStyle": {"color": "#952F57"},
                     "smooth": 0.2,
                     "length": 10,
                     "length2": 20,
