@@ -2,6 +2,7 @@ import streamlit as st
 import hashlib
 import subprocess
 from utils.data import MongoConnection
+from PIL import Image
 
 import requests
 
@@ -17,7 +18,10 @@ data_source = MongoConnection()
 data_source.connect()
 
 def main():
-    st.title("Prototipo de sistema de AA para la identificacion de riesgos para el IPN")
+    col1,col2 = st.beta_columns([1,3])
+    image = Image.open('utils/pdfCreation/images/escudoIPN.jpg')
+    col1.image(image)
+    col2.subheader('Prototipo de sistema de AA para la identificacion de riesgos para el IPN')
     st.subheader("Inicio de Sesión")
     form = st.form(key='Login')
     email = form.text_input("E-mail")

@@ -14,6 +14,7 @@ from utils.pdfCreation import pdf
 import pandas as pd
 from st_aggrid import AgGrid
 import requests
+from PIL import Image
 
 from streamlit_lottie import st_lottie
 
@@ -41,11 +42,13 @@ menu = ["Home","SignUp"]
 choice = st.sidebar.selectbox("Menu",menu)
 
 if choice == "Home":
-
+    col1,col2 = st.beta_columns([1,3])
     st.balloons()
     st.subheader("Home")
     nivel_analisis = st.sidebar.radio('Nivel de analisis',['Datos generales','Datos por alumno'])
-    st.title('Prototipo de sistema de AA para la identificacion de riesgos para el IPN')
+    image = Image.open('utils/pdfCreation/images/escudoIPN.jpg')
+    col1.image(image)
+    col2.subheader('Prototipo de sistema de AA para la identificacion de riesgos para el IPN')
 
     if nivel_analisis == 'Datos generales':
 
