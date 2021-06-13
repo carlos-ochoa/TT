@@ -4,6 +4,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 import os
+import dataframe_image as dfi
 
 def create_download_link(val, filename):
     b64 = base64.b64encode(val)  # val looks like b'...'
@@ -80,7 +81,7 @@ def create_general_report(distribucion_reprobacion, distribucion_bajas,distribuc
     pdf.ln(25)
     pdf.write(5,'Índice de ocupabilidad: Este indice determina la cantidad de alumnos que cursarán cada materia el siguiente periodo.')
     pdf.ln(10)
-    pdf.write(5,'Índice de reprobación: Este indice explica el porcentaje de alumnos que reprobarán cada materia por semestre')
+    pdf.write(5,'Índice de reprobación  : Este indice explica el porcentaje de alumnos que reprobarán cada materia por semestre')
     pdf.image("utils/pdfCreation/images/ocupabilidadMateria.png",5,50,ancho/2-5)
     pdf.image("utils/pdfCreation/images/reprobacionMateria.png",ancho/2+5,50,ancho/2-5)
     pdf.set_text_color(r =0, g = 0, b = 0)
@@ -88,8 +89,9 @@ def create_general_report(distribucion_reprobacion, distribucion_bajas,distribuc
     st.markdown(html, unsafe_allow_html=True)
 
 
-def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen ):
-
+def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen, mi, pc,df,df2 ):
+    dfi.export(df, 'utils/pdfCreation/images/dataframe1.png')
+    dfi.export(df2, 'utils/pdfCreation/images/dataframe2.png')
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font('Arial','B',16)
@@ -101,11 +103,43 @@ def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen
         c = c + '\t'
         numero = numero + 1
     pdf.write(5,c + 'Reporte de identificación de riesgos')
-    pdf.ln(30)
+    pdf.ln(40)
     pdf.set_text_color(r =0, g = 0, b = 0)
     pdf.set_font('Arial', 'B', 13)
     pdf.write(5,'Resultados del alumno: ' + boleta)
     pdf.ln(10)
+
+    ####
+    pdf.set_font('Arial','B',12)
+    pdf.write(5,'Información de historial académico: ')
+    pdf.ln(10)
+
+    ####
+
+    pdf.set_font('Arial','B',12)
+    pdf.write(5,'Número de materias inscritas hasta el momento: ')
+    pdf.set_font('Arial','',11)
+
+    pdf.write(5,mi)
+    pdf.ln(10)
+
+    ####
+    pdf.set_font('Arial','B',12)
+    pdf.write(5,'Periodos cursados hasta el momento: ')
+    pdf.set_font('Arial','',11)
+    pdf.write(5,pc)
+    pdf.ln(15)
+    ###
+    pdf.image("utils/pdfCreation/images/dataframe1.png",30,180,50,60)
+    pdf.image("utils/pdfCreation/images/dataframe2.png",140,180,40,50)
+    pdf.image("utils/pdfCreation/images/escudoIPN.jpg",5,10,50,40)
+    pdf.image("utils/pdfCreation/images/escudoESCA.png",160,10,40,40)
+
+    ####
+    pdf.set_font('Arial','B',12)
+    pdf.write(5,'Diagnóstico de la trayectoria del estudiante: ')
+    pdf.ln(10)
+
 
     ####
     pdf.set_font('Arial','B',12)
@@ -150,6 +184,8 @@ def create_individual_report(boleta,reprobacion, baja,dictamen ,materia_dictamen
 
 
     ####
+    pdf.add_page()
+    pdf.ln(50)
     pdf.set_font('Arial','B',13)
     pdf.write(5,'Indice de reprobación')
     pdf.ln(10)

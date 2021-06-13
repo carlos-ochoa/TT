@@ -224,7 +224,7 @@ if choice == "Home":
         buscar = st.checkbox('Buscar')
         with st.spinner('Cargando datos...'):
             if buscar and len(boleta) > 0:
-                
+
                 # Seccion para determinar la posibilidad de baja
                 alumno = data_source.get_tray_baja_boleta(boleta)
                 mi = alumno[0]['materias_inscritas']
@@ -269,7 +269,7 @@ if choice == "Home":
                     reportes = st.button("Generar reportes")
                     if reportes:
                         #variables: boletas,predicciones_reprobacion[0], predicciones_baja[0],dictamen,nombredictamen
-                        pdf.create_individual_report(boleta,predicciones_reprobacion[0],prediccion_bajas[0],prediccion_dictamen[0],m)
+                        pdf.create_individual_report(boleta,predicciones_reprobacion[0],prediccion_bajas[0],prediccion_dictamen[0],m,str(mi),str(pc),df,df2)
                 else:
                     st.text('Boleta no encontrada')
 
@@ -277,7 +277,7 @@ if choice == "Home":
 elif choice == "SignUp":
     st.subheader("Crear nueva cuenta")
 
-    
+
     form = st.form(key='SignUp')
     nombre = form.text_input("Nombre")
     paterno = form.text_input("Apellido Paterno")
