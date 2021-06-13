@@ -8,10 +8,13 @@ def generar_vectores(trayectorias_reprobacion, trayectorias,nivel):
       mapa_curricular_materias = dict(m['materias'])
     materias_obligatorias = [materia for materia,tipo in mapa_curricular_materias.items() if tipo == 'OBLIGATORIA']
     vectores_totales = []
+    vectores_rose = []
     for alumno in trayectorias_reprobacion:
         if nivel == 'Total' or int(nivel) == alumno['nivel']:
             vectores = []
             vector = [0 for i in range(51)]
+            vector_rose = [alumno['nivel']]
+            vectores_rose.append(vector_rose.copy())
             for dic in alumno['curso_a']:
                 if(dic['tiene_dictamen'] == "si"):
                     vector[0] = 1
@@ -26,7 +29,19 @@ def generar_vectores(trayectorias_reprobacion, trayectorias,nivel):
                     vector[index+1] = 1
             vectores.append(vector)
             vectores_totales.extend(vectores)
-    return np.array(vectores_totales)
+    return np.array(vectores_totales),vectores_rose
+
+def obtener_rose_distribution(vectores,predicciones):
+    p = []
+    for v in vectores:
+        p.append(v[0])
+    periodos = sorted(list(set(p)))
+    distribucion = {str(pe):0 for pe in periodos}
+    for i,v in enumerate(vectores):
+        if predicciones[i] == 1:
+            distribucion[str(v[0])] += 1
+    d = [{"value" : v, "name" : k} for k,v in distribucion.items()]
+    return d
 
 def generar_distribucion(predicciones):
     distribucion = []

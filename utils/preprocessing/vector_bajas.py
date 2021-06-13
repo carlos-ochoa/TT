@@ -16,6 +16,18 @@ def generar_vectores(trayectorias):
         vectores.append(vector.copy())
     return np.array(vectores)
 
+def obtener_rose_distribution(vectores,predicciones):
+    p = []
+    for v in vectores:
+        p.append(v[12]+1)
+    periodos = sorted(list(set(p)))
+    distribucion = {str(pe):0 for pe in periodos}
+    for i,v in enumerate(vectores):
+        if predicciones[i] == 1:
+            distribucion[str(v[12]+1)] += 1
+    d = [{"value" : v, "name" : k} for k,v in distribucion.items()]
+    return d
+
 def filtrar_vectores(vectores, predicciones, semestre = 'Total'):
     vectores_filtrados, predicciones_filtradas = [], []
     if semestre == 'Total':

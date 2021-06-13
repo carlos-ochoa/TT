@@ -52,3 +52,83 @@ def graficar_indice(title,distribuciones,name,color):
         ],
     }
     return pie_options
+
+def graficar_indice2(title,subtitle,distribuciones,name,color):
+    options = {
+        "title": {"text": title, "subtext": subtitle, "left": "center"},
+        "tooltip": {"trigger": "item"},
+        "legend": {"orient": "vertical", "left": "left",},
+        "series": [
+            {
+                "name": name,
+                "type": "pie",
+                "radius": "50%",
+                "data": distribuciones,
+                "emphasis": {
+                    "itemStyle": {
+                        "shadowBlur": 10,
+                        "shadowOffsetX": 0,
+                        "shadowColor": "rgba(0, 0, 0, 0.5)",
+                        "color" : "#952F57"
+                    }
+                },
+            }
+        ],
+    }
+    return options
+
+def graficar_radar(data):
+    option = {
+        "title": {"text": "Comparativa"},
+        "legend": {"data": ["Semestre anterior", "Predicciones del semestre actual"]},
+        "radar": {
+            "indicator": [
+                {"name": "Reprobación", "max": 100},
+                {"name": "Deserción", "max": 100},
+                {"name": "Eficiencia terminal", "max": 100}
+            ]
+        },
+        "series": [
+            {
+                "name": "（Semestre anterior vs Predicción actual）",
+                "type": "radar",
+                "data": [
+                    {
+                        "value": [23,5.2,80],
+                        "name": "Semestre anterior",
+                    },
+                    {
+                        "value": data,
+                        "name": "Predicciones del semestre actual",
+                    },
+                ],
+            }
+        ],
+    }
+    return option
+
+def graficar_rose(data):
+    option = {
+        "legend": {"top": "bottom"},
+        "toolbox": {
+            "show": True,
+            "feature": {
+                "mark": {"show": True},
+                "dataView": {"show": True, "readOnly": False},
+                "restore": {"show": True},
+                "saveAsImage": {"show": True},
+            },
+        },
+        "series": [
+            {
+                "name": "Impacto por nivel",
+                "type": "pie",
+                "radius": [50, 250],
+                "center": ["50%", "50%"],
+                "roseType": "area",
+                "itemStyle": {"borderRadius": 8},
+                "data": data
+            }
+        ],
+    }
+    return option

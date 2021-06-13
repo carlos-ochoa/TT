@@ -17,6 +17,18 @@ def generar_vectores_filtrado(dictamenes, materias_obligatorias, materia_dictame
             vector.clear()
     dictamenes.rewind()
     return np.array(vectores)
+    
+def obtener_rose_distribution(vectores,predicciones):
+    p = []
+    for v in vectores:
+        p.append(v[1])
+    periodos = sorted(list(set(p)))
+    distribucion = {str(pe):0 for pe in periodos}
+    for i,v in enumerate(vectores):
+        if predicciones[i] == 1:
+            distribucion[str(v[1])] += 1
+    d = [{"value" : v, "name" : k} for k,v in distribucion.items()]
+    return d
 
 def generar_vectores(dictamenes, materias_obligatorias):
     vector, vectores = [],[]

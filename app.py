@@ -43,7 +43,7 @@ choice = st.sidebar.selectbox("Menu",menu)
 
 if choice == "Home":
     col1,col2 = st.beta_columns([1,3])
-    st.balloons()
+    #st.balloons()
     st.subheader("Home")
     nivel_analisis = st.sidebar.radio('Nivel de analisis',['Datos generales','Datos por alumno'])
     image = Image.open('utils/pdfCreation/images/escudoIPN.jpg')
@@ -51,6 +51,9 @@ if choice == "Home":
     col2.subheader('Prototipo de sistema de AA para la identificacion de riesgos para el IPN')
 
     if nivel_analisis == 'Datos generales':
+
+        radar = indices.graficar_radar([8.8,43,84])
+        st_echarts(options = radar,height="500px")
 
         ################## Reprobracion
         st.header('Indice de reprobacion')
@@ -65,13 +68,20 @@ if choice == "Home":
         nivel = st.selectbox('Nivel a analizar',
         ('Total', '1', '2','3','4','5'))
 
-        dataset_trayectorias_reprobacion = vector_reprobacion.generar_vectores(trayectorias_reprobacion, trayectorias, nivel)
+        dataset_trayectorias_reprobacion,vectores_rose = vector_reprobacion.generar_vectores(trayectorias_reprobacion, trayectorias, nivel)
         predicciones_reprobacion = reprobacion_model.predict(dataset_trayectorias_reprobacion)
         distribucion_reprobacion, indice_reprobacion = vector_reprobacion.generar_distribucion(predicciones_reprobacion)
         if len(distribucion_reprobacion) != 0:
-            pie = indices.graficar_indice('Alumnos que reprobaran', distribucion_reprobacion,'Estado de reprobacion',"#c23531")
+            #pie = indices.graficar_indice('Alumnos que reprobaran', distribucion_reprobacion,'Estado de reprobacion',"#c23531")
+            pie2 = indices.graficar_indice2('Alumnos que reprobaran',nivel, distribucion_reprobacion,'Estado de reprobacion',"#4A73D1")
             print(distribucion_reprobacion)
-            st_echarts(options = pie)
+            st_echarts(options = pie2,height='600px')
+            #st_echarts(options = pie)
+            if nivel == 'Total':
+                d = vector_reprobacion.obtener_rose_distribution(vectores_rose,predicciones_reprobacion)
+                rose2 = indices.graficar_rose(d)
+                st.subheader('Distribución por nivel')
+                st_echarts(rose2, height='600px')
             st.text(f'El indice de reprobacion esperado para este semestre es: {indice_reprobacion*100}%')
         else:
             st.text(f'No hay informacion disponible')
@@ -97,10 +107,17 @@ if choice == "Home":
         predicciones_bajas = bajas_model.predict(dataset_trayectorias_bajas)
         dataset_trayectorias_bajas, predicciones_bajas = vector_bajas.filtrar_vectores(dataset_trayectorias_bajas, predicciones_bajas, semestre)
         distribucion_bajas, indice_bajas = vector_bajas.generar_distribucion(predicciones_bajas)
+        distribucion_rose = vector_bajas.obtener_rose_distribution(dataset_trayectorias_bajas,predicciones_bajas)
 
         if len(distribucion_bajas) != 0:
-            pie = indices.graficar_indice('Alumnos que daran baja', distribucion_bajas,'Estado de baja',"#4A73D1")
-            st_echarts(options = pie)
+            #pie = indices.graficar_indice('Alumnos que daran baja', distribucion_bajas,'Estado de baja',"#4A73D1")
+            pie2 = indices.graficar_indice2('Alumnos que daran baja',semestre, distribucion_bajas,'Estado de baja',"#4A73D1")
+            #st_echarts(options = pie)
+            st_echarts(options = pie2, height='600px')
+            if semestre == 'Total':
+                rose2 = indices.graficar_rose(distribucion_rose)
+                st.subheader('Distribución por nivel')
+                st_echarts(options = rose2, height="600px")
             st.text(f'El indice de bajas esperado para este semestre es: {indice_bajas*100}%')
             print(distribucion_bajas)
         else:
@@ -127,12 +144,50 @@ if choice == "Home":
 
         distribucion_eficiencia, indice_eficiencia = vector_eficiencia.generar_distribucion(predicciones_egresados)
         if len(distribucion_eficiencia) != 0:
-            pie = indices.graficar_indice('Alumnos que egresaran', distribucion_eficiencia,'Egresa','#D98A2B')
+            #pie = indices.graficar_indice('Alumnos que egresaran', distribucion_eficiencia,'Egresa','#D98A2B')
+            pie2 = indices.graficar_indice2('Alumnos que egresaran',nivel, distribucion_eficiencia,'Egresa',"#4A73D1")
             print(distribucion_eficiencia)
-            st_echarts(options = pie)
+            #st_echarts(options = pie)
+            st_echarts(options = pie2, height='600px')
             st.text(f'El indice de eficiencia terminal esperado para este semestre es: {indice_eficiencia*100}%')
         else:
             st.text(f'No hay informacion disponible')
+
+
+        # SECCION PARA VARIABLE DE CUMPLIMIENTO DE DICTAMEN
+
+        st.header('Cumplimiento de dictamenes')
+
+        dictamen_expander = st.beta_expander(
+            'Descripcion'
+        )
+
+        dictamen_expander.write('Este indice explica el indice esperado de alumnos dictaminados que cumpliran su materia')
+
+        materias_dictamen = vector_dictamenes.get_materias(dictamenes)
+        materia_dictamen = st.selectbox('Materia a analizar' ,materias_dictamen)
+
+        if materia_dictamen == 'Total':
+            vectores_dictamenes = vector_dictamenes.generar_vectores(dictamenes, materias_obligatorias)
+        else:
+            vectores_dictamenes = vector_dictamenes.generar_vectores_filtrado(dictamenes, materias_obligatorias, materia_dictamen)
+        predicciones = dictamenes_model.predict(vectores_dictamenes)
+
+        rose_distribution = vector_dictamenes.obtener_rose_distribution(vectores_dictamenes,predicciones)
+
+        distribucion_dictamenes, indice_dictamenes = vector_dictamenes.generar_distribucion(predicciones)
+        if len(distribucion_dictamenes) != 0:
+            #pie = indices.graficar_indice('Cumplimiento de dictamen', distribucion_dictamenes,'Cumplimiento','#9C2BD9')
+            pie2 = indices.graficar_indice2('Cumplimiento de dictamen',materia_dictamen, distribucion_dictamenes,'Cumplimiento',"#4A73D1")
+            print(distribucion_dictamenes)
+            #st_echarts(options = pie)
+            st_echarts(options=pie2, height='600px')
+            if materia_dictamen == 'Total':
+                rose2 = indices.graficar_rose(rose_distribution)
+                st.subheader('Distribución por nivel')
+                st_echarts(options = rose2, height='600px')
+            st.text(f'El indice de cumplimiento de dictamenes esperado para este semestre es: {indice_dictamenes*100}%')
+
 
         #Seccion para la variable de procentaje de reprobación por materia
 
@@ -182,32 +237,6 @@ if choice == "Home":
         valor_prediccion_ocupabilidad=prediccion_ocupabilidad[0]
 
         st.text(f'El número de  alumnos que cursarán  esta materia  es de : {valor_prediccion_ocupabilidad}')
-
-        # SECCION PARA VARIABLE DE CUMPLIMIENTO DE DICTAMEN
-
-        st.header('Cumplimiento de dictamenes')
-
-        dictamen_expander = st.beta_expander(
-            'Descripcion'
-        )
-
-        dictamen_expander.write('Este indice explica el indice esperado de alumnos dictaminados que cumpliran su materia')
-
-        materias_dictamen = vector_dictamenes.get_materias(dictamenes)
-        materia_dictamen = st.selectbox('Materia a analizar' ,materias_dictamen)
-
-        if materia_dictamen == 'Total':
-            vectores_dictamenes = vector_dictamenes.generar_vectores(dictamenes, materias_obligatorias)
-        else:
-            vectores_dictamenes = vector_dictamenes.generar_vectores_filtrado(dictamenes, materias_obligatorias, materia_dictamen)
-        predicciones = dictamenes_model.predict(vectores_dictamenes)
-
-        distribucion_dictamenes, indice_dictamenes = vector_dictamenes.generar_distribucion(predicciones)
-        if len(distribucion_dictamenes) != 0:
-            pie = indices.graficar_indice('Cumplimiento de dictamen', distribucion_dictamenes,'Cumplimiento','#9C2BD9')
-            print(distribucion_dictamenes)
-            st_echarts(options = pie)
-            st.text(f'El indice de cumplimiento de dictamenes esperado para este semestre es: {indice_dictamenes*100}%')
 
 
         ###Reporte###
