@@ -7,7 +7,7 @@ import random
 # Para evitar el hardcode de la información de acceso
 
 try:
-    cluster = MongoClient("mongodb+srv://admin:Xtwj6YuW9fAYr2P@cluster0.r4oec.mongodb.net/db_TT?retryWrites=true&w=majority")
+    cluster = MongoClient()
     db = cluster['db_TT']
     coll_boletas = db['curso_actual']
     coll_carreras = db['Carreras']
